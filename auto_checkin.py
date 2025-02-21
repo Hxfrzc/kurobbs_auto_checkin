@@ -141,22 +141,44 @@ def configure_logger(debug: bool = False):
 
 
 def main():
-    """Main function to handle command-line arguments and start the sign-in process."""
-    token = os.getenv("TOKEN")
+    """Main function to handle multiple tokens and start the sign-in process."""
+    token_env = os.getenv("TOKENS")  # 读取多个 token，逗号分隔
+    if not token_env:
+        logger.error("未设置 TOKENS 环境变量！")
+        sys.exit(1)
+
+    tokens = token_env.split(",")  # 将多个 token 拆分成列表
     debug = os.getenv("DEBUG", False)
     configure_logger(debug=debug)
 
-    try:
-        kurobbs = KurobbsClient(token)
-        kurobbs.start()
-        if kurobbs.msg:
-            send_bark_notification(kurobbs.msg)
-    except KurobbsClientException as e:
-        logger.error(str(e), exc_info=False)
-        send_bark_notification("签到任务失败!")
-        sys.exit(1)
-    except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
+    results = []
+    errors = []
+
+    for token in tokens:
+        token = token.strip()
+        if not token:
+            continue
+        logger.info(f"开始处理 Token: {token[:6]}****")  # 只显示部分 token 避免泄露
+
+        try:
+            kurobbs = KurobbsClient(token)
+            kurobbs.start()
+            if kurobbs.msg:
+                results.append(kurobbs.msg)
+        except KurobbsClientException as e:
+            error_msg = f"Token {token[:6]}****: {str(e)}"
+            errors.append(error_msg)
+            logger.error(error_msg, exc_info=False)
+        except Exception as e:
+            error_msg = f"Token {token[:6]}****: 发生未知错误: {e}"
+            errors.append(error_msg)
+            logger.error(error_msg)
+
+    # 发送签到结果
+    if results:
+        send_bark_notification("，".join(results) + "!")
+    if errors:
+        send_bark_notification("签到任务部分失败！\n" + "\n".join(errors))
         sys.exit(1)
 
 
