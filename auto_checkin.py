@@ -142,7 +142,7 @@ def configure_logger(debug: bool = False):
 
 def main():
     """Main function to handle multiple tokens and start the sign-in process."""
-    token_env = eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkIjoxNzQwMTI4MjI0NzQ5LCJ1c2VySWQiOjI2MjUzMTY1fQ.545Y7S8qmz3bwGT0uE77tDTrttkRA6nh0HOw7Dv7rp0  # 读取多个 token，逗号分隔
+    token_env = "eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkIjoxNzQwMTI4MjI0NzQ5LCJ1c2VySWQiOjI2MjUzMTY1fQ.545Y7S8qmz3bwGT0uE77tDTrttkRA6nh0HOw7Dv7rp0"  # 读取多个 token，逗号分隔
     if not token_env:
         logger.error("未设置 TOKENS 环境变量！")
         sys.exit(1)
