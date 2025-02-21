@@ -109,14 +109,14 @@ class KurobbsClient:
             action_name="checkin",
             action_method=self.checkin,
             success_message="签到奖励签到成功",
-            failure_message="签到奖励签到失败",
+            failure_message="签到奖励签到失败,或者重复签到",
         )
 
         self._process_sign_action(
             action_name="sign_in",
             action_method=self.sign_in,
             success_message="社区签到成功",
-            failure_message="社区签到失败",
+            failure_message="社区签到失败,或者重复签到",
         )
 
         self._log()
